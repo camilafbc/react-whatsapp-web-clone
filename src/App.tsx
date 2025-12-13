@@ -5,26 +5,34 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import { ChatListItem } from "./components/ChatListItem";
+import { ChatIntro } from "./components/ChatIntro";
+import { ChatWindow } from "./components/ChatWindow";
 
 function App() {
   const [chatList, setChatList] = useState([
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
+    {
+      chatId: 1,
+      title: "Dua Lipa",
+      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
+    },
+    {
+      chatId: 2,
+      title: "Dua Lipa",
+      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
+    },
+    {
+      chatId: 3,
+      title: "Dua Lipa",
+      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
+    },
+    {
+      chatId: 4,
+      title: "Dua Lipa",
+      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
+    },
   ]);
+
+  const [activeChat, setActiveChat] = useState({});
 
   return (
     <div className="flex h-screen bg-[#EDEDED]">
@@ -59,11 +67,19 @@ function App() {
         </div>
         <div className="flex-1 bg-white overflow-y-auto chat-list">
           {chatList.map((item, key) => (
-            <ChatListItem key={key} />
+            <ChatListItem
+              key={key}
+              data={item}
+              active={activeChat.chatId === chatList[key].chatId}
+              onClick={() => setActiveChat(chatList[key])}
+            />
           ))}
         </div>
       </aside>
-      <div className="">content área</div>
+      <div className="flex-1">
+        {activeChat.chatId !== undefined && <ChatWindow />}
+        {activeChat.chatId == undefined && <ChatIntro />}
+      </div>
     </div>
   );
 }
