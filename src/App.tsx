@@ -1,7 +1,71 @@
 import "./App.css";
+import DonutLargeIcon from "@mui/icons-material/DonutLarge";
+import ChatIcon from "@mui/icons-material/Chat";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from "@mui/icons-material/Search";
+import { useState } from "react";
+import { ChatListItem } from "./components/ChatListItem";
 
 function App() {
-  return <div className="flex h-screen bg-[#EDEDED]"></div>;
+  const [chatList, setChatList] = useState([
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+  ]);
+
+  return (
+    <div className="flex h-screen bg-[#EDEDED]">
+      <aside className="w-[35%] max-w-[415px] flex flex-col border-r border-[#DDD]">
+        <header className="h-16 flex items-center justify-between px-4 w-full">
+          <img
+            src="https://avatars.githubusercontent.com/u/97132028?v=4"
+            alt="imagem de perfil do usuário"
+            className="rounded-full size-10 cursor-pointer"
+          />
+          <div className="flex">
+            <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
+              <DonutLargeIcon style={{ color: "#919191" }} />
+            </button>
+            <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
+              <ChatIcon style={{ color: "#919191" }} />
+            </button>
+            <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
+              <MoreVertIcon style={{ color: "#919191" }} />
+            </button>
+          </div>
+        </header>
+        <div className="bg-[#F6F6F6] border-b border-[#EEE] py-2 px-4">
+          <div className=" bg-white h-10 rounded-full flex items-center px-3">
+            <SearchIcon fontSize="small" style={{ color: "#919191" }} />
+            <input
+              type="search"
+              placeholder="Procurar ou começar nova conversa"
+              className="flex-1 border-none outline-none bg-transparent ml-2"
+            />
+          </div>
+        </div>
+        <div className="flex-1 bg-white overflow-y-auto chat-list">
+          {chatList.map((item, key) => (
+            <ChatListItem key={key} />
+          ))}
+        </div>
+      </aside>
+      <div className="">content área</div>
+    </div>
+  );
 }
 
 export default App;
