@@ -5,12 +5,14 @@ body {
   font-family: "Segoe UI", Helvetica Neue, Helvetica, Lucida Grande, Arial;
 }
 
-.chat-list::-webkit-scrollbar {
+.chat-list::-webkit-scrollbar,
+.chat-window::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.chat-list::-webkit-scrollbar-thumb {
+.chat-list::-webkit-scrollbar-thumb,
+.chat-window::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
 }
 

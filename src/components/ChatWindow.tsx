@@ -6,9 +6,17 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
-import { useState, useRef, type SetStateAction } from "react";
+import { useState, useRef, type SetStateAction, useEffect } from "react";
+import { MessageItem } from "./MessageItem";
+import type { User } from "../types/User";
 
-export const ChatWindow = () => {
+type ChatWindowProps = () => {
+  user: User;
+};
+
+export const ChatWindow = ({ user }: ChatWindowProps) => {
+  const body = useRef<HTMLDivElement>(null);
+
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -21,6 +29,42 @@ export const ChatWindow = () => {
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
+  const [list, setList] = useState([
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+    { author: 123, body: "Bora, cruzeiro!!!" },
+    { author: 1234, body: "Te amo, Dua Lipa" },
+    { author: 123, body: "Bla bla bla" },
+  ]);
+
+  useEffect(() => {
+    // Verifica se a altura do scroll é maior do que a altura do elemento (ou seja, há conteúdo)
+    // Se sim, subtrai essa altura para definir a posição inicial do scroll
+    if (body.current && body.current.scrollHeight > body.current.offsetHeight) {
+      body.current.scrollTop =
+        body.current.scrollHeight - body.current.offsetHeight;
+    }
+  }, [list]);
+
   const handleEmojiClick = (emojiData: EmojiClickData, e: MouseEvent) => {
     setText(text + emojiData.emoji);
   };
@@ -73,7 +117,14 @@ export const ChatWindow = () => {
         </div>
       </div>
       {/* body */}
-      <div className="flex-1 bg-[url(https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png)] overflow-y-auto  bg-cover bg-center"></div>
+      <div
+        ref={body}
+        className="flex-1 bg-[url(https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png)] overflow-y-auto  bg-cover bg-center py-5 px-8 chat-window"
+      >
+        {list.map((item, key) => (
+          <MessageItem key={key} data={item} user={user} />
+        ))}
+      </div>
 
       {/* Emoji Picker */}
       <div>

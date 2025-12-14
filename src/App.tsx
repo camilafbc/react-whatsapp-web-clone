@@ -9,6 +9,11 @@ import { ChatIntro } from "./components/ChatIntro";
 import { ChatWindow } from "./components/ChatWindow";
 
 function App() {
+  const [user, setUser] = useState({
+    id: 1234,
+    avatar: "https://avatars.githubusercontent.com/u/97132028?v=4",
+    name: "Camila",
+  });
   const [chatList, setChatList] = useState([
     {
       chatId: 1,
@@ -39,7 +44,7 @@ function App() {
       <aside className="w-[35%] max-w-[415px] flex flex-col border-r border-[#DDD]">
         <header className="h-16 flex items-center justify-between px-4 w-full">
           <img
-            src="https://avatars.githubusercontent.com/u/97132028?v=4"
+            src={user.avatar}
             alt="imagem de perfil do usuário"
             className="rounded-full size-10 cursor-pointer"
           />
@@ -77,7 +82,7 @@ function App() {
         </div>
       </aside>
       <div className="flex-1">
-        {activeChat.chatId !== undefined && <ChatWindow />}
+        {activeChat.chatId !== undefined && <ChatWindow user={user} />}
         {activeChat.chatId == undefined && <ChatIntro />}
       </div>
     </div>
