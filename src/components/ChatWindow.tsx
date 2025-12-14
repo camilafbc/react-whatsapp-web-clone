@@ -6,17 +6,45 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
-import { useState } from "react";
+import { useState, useRef, type SetStateAction } from "react";
 
 export const ChatWindow = () => {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  if (recognitionRef.current === null && SpeechRecognition !== undefined) {
+    recognitionRef.current = new SpeechRecognition();
+  }
+
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
   const [text, setText] = useState("");
+  const [listening, setListening] = useState(false);
   const handleEmojiClick = (emojiData: EmojiClickData, e: MouseEvent) => {
     setText(text + emojiData.emoji);
   };
 
   const handleSendClick = () => {
     console.log("enviando");
+  };
+
+  const handleMicClick = () => {
+    if (recognitionRef.current !== null) {
+      recognitionRef.current.onstart = () => {
+        setListening(true);
+      };
+      recognitionRef.current.onend = () => {
+        setListening(false);
+      };
+      recognitionRef.current.onresult = (e: {
+        results: { transcript: SetStateAction<string> }[][];
+      }) => {
+        setText(e.results[0][0].transcript);
+      };
+
+      recognitionRef.current.start();
+    }
   };
 
   return (
@@ -102,12 +130,22 @@ export const ChatWindow = () => {
         </div>
 
         <div className="flex">
-          <button
-            onClick={handleSendClick}
-            className="size-10 rounded-full cursor-pointer flex justify-center items-center"
-          >
-            <SendIcon style={{ color: "#919191" }} />
-          </button>
+          {text !== "" && (
+            <button
+              onClick={handleSendClick}
+              className="size-10 rounded-full cursor-pointer flex justify-center items-center"
+            >
+              <SendIcon style={{ color: "#919191" }} />
+            </button>
+          )}
+          {text === "" && (
+            <button
+              onClick={() => handleMicClick()}
+              className="size-10 rounded-full cursor-pointer flex justify-center items-center"
+            >
+              <MicIcon style={{ color: listening ? "#126ECE" : "#919191" }} />
+            </button>
+          )}
         </div>
       </div>
     </div>
