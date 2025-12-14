@@ -13,3 +13,7 @@ body {
 .chat-list::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
 }
+
+h2.epr-emoji-category-label {
+  background-color: transparent;
+}
