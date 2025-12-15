@@ -6,13 +6,15 @@ body {
 }
 
 .chat-list::-webkit-scrollbar,
-.chat-window::-webkit-scrollbar {
+.chat-window::-webkit-scrollbar,
+.new-chat-list::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 .chat-list::-webkit-scrollbar-thumb,
-.chat-window::-webkit-scrollbar-thumb {
+.chat-window::-webkit-scrollbar-thumb,
+.new-chat-list::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
 }
 

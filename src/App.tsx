@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ChatListItem } from "./components/ChatListItem";
 import { ChatIntro } from "./components/ChatIntro";
 import { ChatWindow } from "./components/ChatWindow";
+import { NewChat } from "./components/NewChat";
 
 function App() {
   const [user, setUser] = useState({
@@ -38,10 +39,22 @@ function App() {
   ]);
 
   const [activeChat, setActiveChat] = useState({});
+  const [showNewChat, setShowNewChat] = useState(false);
+
+  const handleNewChat = () => {
+    setShowNewChat(true);
+  };
 
   return (
     <div className="flex h-screen bg-[#EDEDED]">
+      {/* Sidebar */}
       <aside className="w-[35%] max-w-[415px] flex flex-col border-r border-[#DDD]">
+        <NewChat
+          chatList={chatList}
+          user={user}
+          show={showNewChat}
+          setShow={setShowNewChat}
+        />
         <header className="h-16 flex items-center justify-between px-4 w-full">
           <img
             src={user.avatar}
@@ -52,7 +65,10 @@ function App() {
             <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
               <DonutLargeIcon style={{ color: "#919191" }} />
             </button>
-            <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
+            <button
+              onClick={handleNewChat}
+              className="size-10 rounded-full cursor-pointer flex justify-center items-center"
+            >
               <ChatIcon style={{ color: "#919191" }} />
             </button>
             <button className="size-10 rounded-full cursor-pointer flex justify-center items-center">
@@ -81,6 +97,7 @@ function App() {
           ))}
         </div>
       </aside>
+      {/* Content */}
       <div className="flex-1">
         {activeChat.chatId !== undefined && <ChatWindow user={user} />}
         {activeChat.chatId == undefined && <ChatIntro />}
