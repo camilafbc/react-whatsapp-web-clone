@@ -10,6 +10,7 @@ import { ChatWindow } from "./components/ChatWindow";
 import { NewChat } from "./components/NewChat";
 import { Login } from "./components/Login";
 import type { User } from "./types/User";
+import { addUser } from "./api/api";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -53,6 +54,8 @@ function App() {
       name: user.displayName,
       avatar: user.photoURL,
     };
+
+    await addUser(newUser);
 
     if (newUser) {
       setUser(newUser);
