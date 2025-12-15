@@ -8,13 +8,11 @@ import { ChatListItem } from "./components/ChatListItem";
 import { ChatIntro } from "./components/ChatIntro";
 import { ChatWindow } from "./components/ChatWindow";
 import { NewChat } from "./components/NewChat";
+import { Login } from "./components/Login";
+import type { User } from "./types/User";
 
 function App() {
-  const [user, setUser] = useState({
-    id: 1234,
-    avatar: "https://avatars.githubusercontent.com/u/97132028?v=4",
-    name: "Camila",
-  });
+  const [user, setUser] = useState<User | null>(null);
   const [chatList, setChatList] = useState([
     {
       chatId: 1,
@@ -44,6 +42,26 @@ function App() {
   const handleNewChat = () => {
     setShowNewChat(true);
   };
+
+  const handleLoginData = async (user: {
+    uid: number;
+    displayName: string;
+    photoURL: string;
+  }) => {
+    const newUser = {
+      id: user.uid,
+      name: user.displayName,
+      avatar: user.photoURL,
+    };
+
+    if (newUser) {
+      setUser(newUser);
+    }
+  };
+
+  if (user === null) {
+    return <Login onReceive={handleLoginData} />;
+  }
 
   return (
     <div className="flex h-screen bg-[#EDEDED]">
