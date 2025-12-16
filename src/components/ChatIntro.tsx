@@ -1,11 +1,9 @@
+import InfoConnectionImg from "/intro-connection.jpg";
+
 export const ChatIntro = () => {
   return (
     <div className="bg-[#F8F9FA] flex flex-col justify-center items-center h-screen">
-      <img
-        src="https://web.whatsapp.com/img/intro-connection-light_c98cc75f2aa905314d74375a975d2cf2.jpg"
-        alt="fsdfsfd"
-        className="w-[250px] h-auto"
-      />
+      <img src={InfoConnectionImg} alt="fsdfsfd" className="w-[250px] h-auto" />
       <h1 className="text-3xl text-[#525252] mt-8">
         Mantenha seu celular conectado
       </h1>

@@ -17,6 +17,8 @@ function App() {
   const [chatList, setChatList] = useState<UserChat[]>([]);
   const [activeChat, setActiveChat] = useState<UserChat>();
   const [showNewChat, setShowNewChat] = useState(false);
+  const [filteredChatList, setFilteredChatList] = useState<UserChat[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (user !== null) {
@@ -24,6 +26,10 @@ function App() {
       return unsub;
     }
   }, [user]);
+
+  useEffect(() => {
+    setFilteredChatList(chatList);
+  }, [chatList]);
 
   const handleNewChat = () => {
     setShowNewChat(true);
@@ -90,30 +96,33 @@ function App() {
             <input
               type="search"
               placeholder="Procurar ou começar nova conversa"
+              value={search}
               onChange={(e) => {
-                if (e.target.value !== "") {
-                  const ch = chatList.filter((c) =>
-                    c.title
-                      .toLowerCase()
-                      .includes(e.target.value.toLocaleLowerCase())
-                  );
+                const value = e.target.value;
+                setSearch(value);
 
-                  setChatList(ch);
-                } else {
-                  setChatList(chatListSearch);
+                if (!value) {
+                  setFilteredChatList(chatList);
+                  return;
                 }
+
+                const filtered = chatList.filter((c) =>
+                  c.title.toLowerCase().includes(value.toLowerCase())
+                );
+
+                setFilteredChatList(filtered);
               }}
               className="flex-1 border-none outline-none bg-transparent ml-2"
             />
           </div>
         </div>
         <div className="flex-1 bg-white overflow-y-auto chat-list">
-          {chatList.map((item, key) => (
+          {filteredChatList.map((item, key) => (
             <ChatListItem
               key={key}
               data={item}
-              active={activeChat?.chatId === chatList[key].chatId}
-              onClick={() => setActiveChat(chatList[key])}
+              active={activeChat?.chatId === item.chatId}
+              onClick={() => setActiveChat(item)}
             />
           ))}
         </div>
