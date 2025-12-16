@@ -1,41 +1,33 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useState } from "react";
-import type { User } from "../types/User";
+import { useEffect, useState } from "react";
+import type { User, UserChat } from "../types/User";
+import { addNewChat, getContactList } from "../api/api";
 
 type NewChatProps = {
-  chatList: any[];
+  chatList: UserChat[];
   user: User;
   show: boolean;
   setShow: (v: boolean) => void;
 };
 
-export const NewChat = ({ show, setShow }: NewChatProps) => {
-  const [list, setList] = useState([
-    {
-      id: 12,
-      avatar:
-        "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg",
-      nome: "Teste",
-    },
-    {
-      id: 12,
-      avatar:
-        "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg",
-      nome: "Teste",
-    },
-    {
-      id: 12,
-      avatar:
-        "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg",
-      nome: "Teste",
-    },
-    {
-      id: 12,
-      avatar:
-        "https://aui.atlassian.com/aui/latest/docs/images/avatar-person.svg",
-      nome: "Teste",
-    },
-  ]);
+export const NewChat = ({ user, show, setShow }: NewChatProps) => {
+  const [list, setList] = useState<[] | User[]>([]);
+
+  useEffect(() => {
+    const getList = async () => {
+      if (user !== null) {
+        const results = await getContactList(user.id);
+        setList(results);
+      }
+    };
+    getList();
+  }, [user]);
+
+  const handleNewChat = async (contact: User) => {
+    await addNewChat(user, contact);
+
+    handleBack();
+  };
 
   const handleBack = () => {
     setShow(false);
@@ -69,10 +61,11 @@ export const NewChat = ({ show, setShow }: NewChatProps) => {
         {list.map((item, key) => (
           <div
             key={key}
+            onClick={() => handleNewChat(item)}
             className="flex items-center p-4 cursor-pointer hover:bg-[#F5F5F5]"
           >
             <img src={item.avatar} className="rounded-full size-12 mr-4" />
-            <div className="text-lg font-semibold">{item.nome}</div>
+            <div className="text-lg font-semibold">{item.name}</div>
           </div>
         ))}
       </div>

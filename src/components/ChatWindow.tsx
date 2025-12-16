@@ -6,15 +6,23 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
-import { useState, useRef, type SetStateAction, useEffect } from "react";
+import {
+  useState,
+  useRef,
+  type SetStateAction,
+  useEffect,
+  type KeyboardEvent,
+} from "react";
 import { MessageItem } from "./MessageItem";
-import type { User } from "../types/User";
+import type { User, UserChat } from "../types/User";
+import { onChatContent, sendMessage } from "../api/api";
 
-type ChatWindowProps = () => {
+type ChatWindowProps = {
   user: User;
+  data: UserChat;
 };
 
-export const ChatWindow = ({ user }: ChatWindowProps) => {
+export const ChatWindow = ({ user, data }: ChatWindowProps) => {
   const body = useRef<HTMLDivElement>(null);
 
   const SpeechRecognition =
@@ -29,32 +37,13 @@ export const ChatWindow = ({ user }: ChatWindowProps) => {
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
-  const [list, setList] = useState([
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-    { author: 123, body: "Bora, cruzeiro!!!" },
-    { author: 1234, body: "Te amo, Dua Lipa" },
-    { author: 123, body: "Bla bla bla" },
-  ]);
+  const [list, setList] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const unsub = onChatContent(data.chatId, setList, setUsers);
+    return unsub;
+  }, [data.chatId]);
 
   useEffect(() => {
     // Verifica se a altura do scroll é maior do que a altura do elemento (ou seja, há conteúdo)
@@ -65,12 +54,22 @@ export const ChatWindow = ({ user }: ChatWindowProps) => {
     }
   }, [list]);
 
-  const handleEmojiClick = (emojiData: EmojiClickData, e: MouseEvent) => {
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
     setText(text + emojiData.emoji);
   };
 
   const handleSendClick = () => {
-    console.log("enviando");
+    if (text !== "") {
+      sendMessage(data, user.id, "text", text, users);
+      setText("");
+      setOpenEmojiPicker(false);
+    }
+  };
+
+  const handleInputKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSendClick();
+    }
   };
 
   const handleMicClick = () => {
@@ -97,11 +96,11 @@ export const ChatWindow = ({ user }: ChatWindowProps) => {
       <div className="h-16 border-b border-[#CCCCCC] flex justify-between items-center px-4">
         <div className="flex items-center cursor-pointer">
           <img
-            src="https://avatars.githubusercontent.com/u/97132028?v=4"
+            src={data.image}
             alt="user avatar"
             className="rounded-full size-10 cursor-pointer mx-4"
           />
-          <div className="font-semibold text-lg">Camila</div>
+          <div className="font-semibold text-lg">{data.title}</div>
         </div>
 
         <div className="flex">
@@ -176,6 +175,7 @@ export const ChatWindow = ({ user }: ChatWindowProps) => {
             placeholder="Digite uma mensagem"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyUp={handleInputKeyUp}
             className="w-full h-10 border-none outline-none rounded-full bg-white font-size-[15px] pl-4 text-[#4A4A4A]"
           />
         </div>

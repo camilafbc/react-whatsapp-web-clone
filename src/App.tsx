@@ -3,52 +3,39 @@ import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import ChatIcon from "@mui/icons-material/Chat";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatListItem } from "./components/ChatListItem";
 import { ChatIntro } from "./components/ChatIntro";
 import { ChatWindow } from "./components/ChatWindow";
 import { NewChat } from "./components/NewChat";
 import { Login } from "./components/Login";
-import type { User } from "./types/User";
-import { addUser } from "./api/api";
+import type { User, UserChat } from "./types/User";
+import { addUser, onChatList } from "./api/api";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [chatList, setChatList] = useState([
-    {
-      chatId: 1,
-      title: "Dua Lipa",
-      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
-    },
-    {
-      chatId: 2,
-      title: "Dua Lipa",
-      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
-    },
-    {
-      chatId: 3,
-      title: "Dua Lipa",
-      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
-    },
-    {
-      chatId: 4,
-      title: "Dua Lipa",
-      image: "https://avatars.githubusercontent.com/u/97132028?v=4",
-    },
-  ]);
-
-  const [activeChat, setActiveChat] = useState({});
+  const [chatList, setChatList] = useState<UserChat[]>([]);
+  const [activeChat, setActiveChat] = useState<UserChat>();
   const [showNewChat, setShowNewChat] = useState(false);
+
+  useEffect(() => {
+    if (user !== null) {
+      const unsub = onChatList(user.id, setChatList);
+      return unsub;
+    }
+  }, [user]);
 
   const handleNewChat = () => {
     setShowNewChat(true);
   };
 
   const handleLoginData = async (user: {
-    uid: number;
-    displayName: string;
-    photoURL: string;
+    uid: string;
+    displayName: string | null;
+    photoURL: string | null;
   }) => {
+    if (!user.displayName || !user.photoURL) return;
+
     const newUser = {
       id: user.uid,
       name: user.displayName,
@@ -103,6 +90,19 @@ function App() {
             <input
               type="search"
               placeholder="Procurar ou começar nova conversa"
+              onChange={(e) => {
+                if (e.target.value !== "") {
+                  const ch = chatList.filter((c) =>
+                    c.title
+                      .toLowerCase()
+                      .includes(e.target.value.toLocaleLowerCase())
+                  );
+
+                  setChatList(ch);
+                } else {
+                  setChatList(chatListSearch);
+                }
+              }}
               className="flex-1 border-none outline-none bg-transparent ml-2"
             />
           </div>
@@ -112,7 +112,7 @@ function App() {
             <ChatListItem
               key={key}
               data={item}
-              active={activeChat.chatId === chatList[key].chatId}
+              active={activeChat?.chatId === chatList[key].chatId}
               onClick={() => setActiveChat(chatList[key])}
             />
           ))}
@@ -120,8 +120,10 @@ function App() {
       </aside>
       {/* Content */}
       <div className="flex-1">
-        {activeChat.chatId !== undefined && <ChatWindow user={user} />}
-        {activeChat.chatId == undefined && <ChatIntro />}
+        {activeChat?.chatId !== undefined && (
+          <ChatWindow user={user} data={activeChat} />
+        )}
+        {activeChat?.chatId == undefined && <ChatIntro />}
       </div>
     </div>
   );
