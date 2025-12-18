@@ -15,8 +15,6 @@ import type { User, UserChat } from "../types/User";
 import type { Dispatch, SetStateAction } from "react";
 import { firebaseConfig } from "../firebaseConfig.ts";
 
-console.log("firebaseConfig: ", firebaseConfig);
-
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
