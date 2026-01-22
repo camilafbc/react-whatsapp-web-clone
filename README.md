@@ -2,6 +2,8 @@
 
 Projeto desenvolvido como parte da trilha front-end do curso Fullstack da B7Web, com foco em entender na prática como funciona a construção de uma aplicação de chat em tempo real, desde a componentização até a integração com um backend.
 
+<img width="100%" src="https://raw.githubusercontent.com/camilafbc/react-whatsapp-web-clone/refs/heads/main/to_readme.gif"/>
+
 ## Tecnologias utilizadas
 
 **Front-end:** React, TailwindCSS, React Emoji Picker, Material UI Icons
