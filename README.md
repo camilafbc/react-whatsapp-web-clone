@@ -44,7 +44,7 @@ Para testar localmente, é necessário configurar um projeto Firebase e habilita
 Clone o projeto
 
 ```bash
-  git clone https://link-para-o-projeto
+  git clone https://github.com/camilafbc/react-whatsapp-web-clone
 ```
 
 Entre no diretório do projeto
