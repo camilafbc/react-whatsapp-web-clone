@@ -8,9 +8,15 @@ type NewChatProps = {
   user: User;
   show: boolean;
   setShow: (v: boolean) => void;
+  setActiveChat: (chat: UserChat) => void;
 };
 
-export const NewChat = ({ user, show, setShow }: NewChatProps) => {
+export const NewChat = ({
+  user,
+  show,
+  setShow,
+  setActiveChat,
+}: NewChatProps) => {
   const [list, setList] = useState<[] | User[]>([]);
 
   useEffect(() => {
@@ -24,7 +30,11 @@ export const NewChat = ({ user, show, setShow }: NewChatProps) => {
   }, [user]);
 
   const handleNewChat = async (contact: User) => {
-    await addNewChat(user, contact);
+    const chat = await addNewChat(user, contact);
+
+    if (chat) {
+      setActiveChat(chat);
+    }
 
     handleBack();
   };

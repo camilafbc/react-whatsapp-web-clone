@@ -68,6 +68,7 @@ function App() {
           user={user}
           show={showNewChat}
           setShow={setShowNewChat}
+          setActiveChat={setActiveChat}
         />
         <header className="h-16 flex items-center justify-between px-4 w-full">
           <img
@@ -107,7 +108,7 @@ function App() {
                 }
 
                 const filtered = chatList.filter((c) =>
-                  c.title.toLowerCase().includes(value.toLowerCase())
+                  c.title.toLowerCase().includes(value.toLowerCase()),
                 );
 
                 setFilteredChatList(filtered);
@@ -117,9 +118,9 @@ function App() {
           </div>
         </div>
         <div className="flex-1 bg-white overflow-y-auto chat-list">
-          {filteredChatList.map((item, key) => (
+          {filteredChatList.map((item) => (
             <ChatListItem
-              key={key}
+              key={item.chatId}
               data={item}
               active={activeChat?.chatId === item.chatId}
               onClick={() => setActiveChat(item)}

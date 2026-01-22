@@ -18,14 +18,19 @@ export const ChatListItem = ({ onClick, active, data }: ChatListItemProps) => {
       }`}
     >
       <img
-        src={data.image}
+        src={
+          data.image ??
+          "https://lh3.googleusercontent.com/a/ACg8ocIov-ZvMnjb4k6F82cB87enEjYpJhSsaYx8M0TapXzSVr6U1qZm=s96-c"
+        }
         alt="user avatar"
         className="rounded-full size-12 ml-4"
       />
       <div className="flex-1 flex flex-col justify-center border-b border-[#EEE] pr-4 ml-4 flex-wrap min-w-0 h-full">
         <div className="flex justify-between items-center w-full">
           <div className="font-bold text-lg">{data.title}</div>
-          <div className="text-xs text-[#999]">{time}</div>
+          {data.lastMessageDate && (
+            <div className="text-xs text-[#999]">{time}</div>
+          )}
         </div>
         <div className="text-sm text-[#999] flex max-w-full">
           <p className="truncate m-0">{data.lastMessage}</p>

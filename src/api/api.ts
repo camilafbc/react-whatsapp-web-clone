@@ -51,7 +51,7 @@ export const addUser = async (user: User) => {
       name: user.name,
       avatar: user.avatar,
     },
-    { merge: true } // preserva o documento atualizando os campos necessários
+    { merge: true }, // preserva o documento atualizando os campos necessários
   );
 };
 
@@ -70,38 +70,90 @@ export const getContactList = async (userId: string) => {
 };
 
 export const addNewChat = async (user: User, contact: User) => {
-  const chatsRef = collection(db, "chats");
-  const newChatRef = doc(chatsRef);
   const userRef = doc(db, "users", user.id);
   const contactRef = doc(db, "users", contact.id);
+
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    const userData = userSnap.data();
+
+    const existingChat = userData.chats?.find(
+      (chat: UserChat) => chat.with === contact.id,
+    );
+
+    if (existingChat) {
+      return existingChat; // 👈 chat já existe
+    }
+  }
+
+  // 🔥 Só cria se não existir
+  const chatsRef = collection(db, "chats");
+  const newChatRef = doc(chatsRef);
 
   await setDoc(newChatRef, {
     messages: [],
     users: [user.id, contact.id],
   });
 
+  const chatForUser = {
+    chatId: newChatRef.id,
+    title: contact.name,
+    image: contact.avatar,
+    with: contact.id,
+  };
+
+  const chatForContact = {
+    chatId: newChatRef.id,
+    title: user.name,
+    image: user.avatar,
+    with: user.id,
+  };
+
   await updateDoc(userRef, {
-    chats: arrayUnion({
-      chatId: newChatRef.id,
-      title: contact.name,
-      image: contact.avatar,
-      with: contact.id,
-    }),
+    chats: arrayUnion(chatForUser),
   });
 
   await updateDoc(contactRef, {
-    chats: arrayUnion({
-      chatId: newChatRef.id,
-      title: user.name,
-      image: user.avatar,
-      with: user.id,
-    }),
+    chats: arrayUnion(chatForContact),
   });
+
+  return chatForUser;
 };
+
+// export const addNewChat = async (user: User, contact: User) => {
+//   const chatsRef = collection(db, "chats");
+//   const newChatRef = doc(chatsRef);
+//   const userRef = doc(db, "users", user.id);
+//   const contactRef = doc(db, "users", contact.id);
+
+//   await setDoc(newChatRef, {
+//     messages: [],
+//     users: [user.id, contact.id],
+//   });
+
+//   await updateDoc(userRef, {
+//     chats: arrayUnion({
+//       chatId: newChatRef.id,
+//       title: contact.name,
+//       image: contact.avatar,
+//       with: contact.id,
+//     }),
+//   });
+
+//   await updateDoc(contactRef, {
+//     chats: arrayUnion({
+//       chatId: newChatRef.id,
+//       title: user.name,
+//       image: user.avatar,
+//       with: user.id,
+//     }),
+//   });
+// };
 
 export const onChatList = (
   userId: string,
-  setChatList: Dispatch<SetStateAction<UserChat[]>>
+  setChatList: Dispatch<SetStateAction<UserChat[]>>,
 ) => {
   const userRef = doc(db, "users", userId);
 
@@ -133,7 +185,7 @@ export const onChatList = (
 export const onChatContent = (
   chatId: string,
   setList: Dispatch<SetStateAction<never[]>>,
-  setUsers: Dispatch<SetStateAction<never[]>>
+  setUsers: Dispatch<SetStateAction<never[]>>,
 ) => {
   const chatsRef = doc(db, "chats", chatId);
 
@@ -159,7 +211,7 @@ export const sendMessage = async (
   userId: string,
   type: string,
   body: string,
-  users: string[]
+  users: string[],
 ) => {
   const chatsRef = doc(db, "chats", chatData.chatId);
   const now = new Date();
